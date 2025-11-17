@@ -6,12 +6,17 @@ const loadingMessage = document.getElementById('loadingMessage');
 const placeholderMessage = document.getElementById('placeholderMessage');
 const highlightsSection = document.getElementById('highlightsSection');
 const highlightsList = document.getElementById('highlightsList');
+const viewAllTagsBtn = document.getElementById('viewAllTagsBtn');
+const tagsModal = document.getElementById('tagsModal');
+const tagsModalBody = document.getElementById('tagsModalBody');
+const closeTagsModal = document.getElementById('closeTagsModal');
 
 // Current state
 let spaces = [];
 let currentSpaceId = null;
 let mpSdk = null;
 let highlights = [];
+let allTagsData = [];
 
 // Load spaces from JSON file
 async function loadSpaces() {
@@ -88,8 +93,10 @@ function loadSpace(space) {
     
     // Clear previous highlights
     highlights = [];
+    allTagsData = [];
     highlightsList.innerHTML = '';
     highlightsSection.style.display = 'none';
+    if (viewAllTagsBtn) viewAllTagsBtn.style.display = 'none';
     mpSdk = null;
     
     // Show loading message
@@ -174,13 +181,16 @@ async function loadHighlights() {
             }
         }
         
-        highlights = Array.isArray(tags) ? tags : [];
+        // Store all tag data for detailed view
+        allTagsData = Array.isArray(tags) ? tags : [];
+        highlights = allTagsData;
         
         // Render highlights
         renderHighlights();
     } catch (error) {
         console.error('Failed to load highlights:', error);
         highlights = [];
+        allTagsData = [];
         renderHighlights();
     }
 }
@@ -191,10 +201,18 @@ function renderHighlights() {
     
     if (highlights.length === 0) {
         highlightsSection.style.display = 'none';
+        if (viewAllTagsBtn) viewAllTagsBtn.style.display = 'none';
         return;
     }
     
     highlightsSection.style.display = 'block';
+    
+    // Show the view all tags button if tags exist
+    if (viewAllTagsBtn && allTagsData.length > 0) {
+        viewAllTagsBtn.style.display = 'block';
+    } else if (viewAllTagsBtn) {
+        viewAllTagsBtn.style.display = 'none';
+    }
     
     highlights.forEach((highlight, index) => {
         const li = document.createElement('li');
@@ -211,6 +229,75 @@ function renderHighlights() {
         highlightsList.appendChild(li);
     });
 }
+
+// Display all tags information in modal
+function displayAllTagsInfo() {
+    if (!allTagsData || allTagsData.length === 0) {
+        tagsModalBody.innerHTML = '<p>No tags available in this space.</p>';
+        tagsModal.style.display = 'flex';
+        return;
+    }
+    
+    let html = `<div class="tags-summary">Total Tags: <strong>${allTagsData.length}</strong></div>`;
+    
+    allTagsData.forEach((tag, index) => {
+        html += `
+            <div class="tag-info-card">
+                <div class="tag-info-header">
+                    <h4>Tag ${index + 1}: ${tag.label || tag.name || tag.title || 'Unnamed Tag'}</h4>
+                </div>
+                <div class="tag-info-body">
+                    <div class="tag-info-row">
+                        <strong>ID:</strong> <code>${tag.id || tag.sid || 'N/A'}</code>
+                    </div>
+                    ${tag.description ? `
+                    <div class="tag-info-row">
+                        <strong>Description:</strong> ${tag.description}
+                    </div>
+                    ` : ''}
+                    ${tag.anchor ? `
+                    <div class="tag-info-row">
+                        <strong>Anchor:</strong> <code>${tag.anchor}</code>
+                    </div>
+                    ` : ''}
+                    ${tag.sid ? `
+                    <div class="tag-info-row">
+                        <strong>Sweep ID:</strong> <code>${tag.sid}</code>
+                    </div>
+                    ` : ''}
+                    ${tag.position ? `
+                    <div class="tag-info-row">
+                        <strong>Position:</strong> 
+                        <code>X: ${tag.position.x || 'N/A'}, Y: ${tag.position.y || 'N/A'}, Z: ${tag.position.z || 'N/A'}</code>
+                    </div>
+                    ` : ''}
+                    ${tag.rotation ? `
+                    <div class="tag-info-row">
+                        <strong>Rotation:</strong> 
+                        <code>X: ${tag.rotation.x || 'N/A'}, Y: ${tag.rotation.y || 'N/A'}, Z: ${tag.rotation.z || 'N/A'}</code>
+                    </div>
+                    ` : ''}
+                    <div class="tag-info-row">
+                        <strong>Full Data:</strong>
+                        <pre class="tag-json">${JSON.stringify(tag, null, 2)}</pre>
+                    </div>
+                    <button class="navigate-tag-btn" onclick="navigateToTagFromModal(${index})">Navigate to this tag</button>
+                </div>
+            </div>
+        `;
+    });
+    
+    tagsModalBody.innerHTML = html;
+    tagsModal.style.display = 'flex';
+}
+
+// Navigate to tag from modal
+window.navigateToTagFromModal = function(index) {
+    if (allTagsData[index]) {
+        navigateToHighlight(allTagsData[index]);
+        tagsModal.style.display = 'none';
+    }
+};
 
 // Navigate to a specific highlight
 async function navigateToHighlight(highlight) {
@@ -280,4 +367,26 @@ document.addEventListener('keydown', (e) => {
 });
 
 // Initialize on page load
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', () => {
+    init();
+    
+    // Add event listeners for tags modal
+    if (viewAllTagsBtn) {
+        viewAllTagsBtn.addEventListener('click', displayAllTagsInfo);
+    }
+    
+    if (closeTagsModal) {
+        closeTagsModal.addEventListener('click', () => {
+            tagsModal.style.display = 'none';
+        });
+    }
+    
+    // Close modal when clicking outside
+    if (tagsModal) {
+        tagsModal.addEventListener('click', (e) => {
+            if (e.target === tagsModal) {
+                tagsModal.style.display = 'none';
+            }
+        });
+    }
+});
