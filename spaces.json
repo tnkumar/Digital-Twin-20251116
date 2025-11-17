@@ -1,14 +1,62 @@
 [
   {
     "id": 1,
-    "name": "Modern Art Gallery",
-    "description": "Contemporary art exhibition space",
-    "modelId": "SrRGkUGS38J"
+    "name": "Humanscale HQ NYC",
+    "description": "Corporate headquarters in Manhattan",
+    "modelId": "HyHK1Zzaf3p"
   },
   {
     "id": 2,
-    "name": "Luxury Apartment",
-    "description": "High-end residential showcase",
-    "modelId": "qsNdo2d6Qyy"
+    "name": "Y Combinator Office",
+    "description": "Startup accelerator office in Mountain View",
+    "modelId": "mkoMFPRajsL"
+  },
+  {
+    "id": 3,
+    "name": "Evergreen Air & Space Museum",
+    "description": "Aviation and space museum tour",
+    "modelId": "SrRGkUGS38J"
+  },
+  {
+    "id": 4,
+    "name": "Public Museum of Maradona",
+    "description": "Museum dedicated to Diego Maradona",
+    "modelId": "mv9ZSbQJebv"
+  },
+  {
+    "id": 5,
+    "name": "Community & Creativity Space",
+    "description": "Creative multi\u2011use public area",
+    "modelId": "KUPsC1P5bvC"
+  },
+  {
+    "id": 6,
+    "name": "Public Area \u2013 Fort Lauderdale",
+    "description": "Public mixed\u2011use indoor environment",
+    "modelId": "WThVDuHqpzG"
+  },
+  {
+    "id": 7,
+    "name": "The Space At The Place",
+    "description": "Event and gathering venue",
+    "modelId": "9z5m2aqe3fX"
+  },
+  {
+    "id": 8,
+    "name": "Atmos \u2013 Ponmar Site",
+    "description": "Residential/architectural showcase",
+    "modelId": "sFAt4xa8ryZ"
+  },
+  {
+    "id": 9,
+    "name": "Thurgood Marshall Memorial",
+    "description": "Historic memorial landmark",
+    "modelId": "xyjrTi8orPE"
+  },
+  {
+    "id": 10,
+    "name": "Kunta Kinte\u2013Alex Haley Memorial",
+    "description": "Waterfront historical memorial",
+    "modelId": "4wrpUDfGe3u"
   }
 ]
