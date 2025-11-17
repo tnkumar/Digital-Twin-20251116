@@ -34,5 +34,11 @@
     "name": "Thurgood Marshall Memorial",
     "description": "Historic memorial landmark",
     "modelId": "xyjrTi8orPE"
+  },
+  {
+    "id": 10,
+    "name": "Nice Home",
+    "description": "Sample space in Matterport",
+    "modelId": "E2StVA53TxL"
   }
 ]
