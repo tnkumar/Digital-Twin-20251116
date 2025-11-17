@@ -18,6 +18,14 @@
                     <!-- Space items will be loaded dynamically -->
                 </ul>
             </nav>
+            <div class="highlights-section" id="highlightsSection" style="display: none;">
+                <div class="highlights-header">
+                    <h3>Highlights</h3>
+                </div>
+                <ul class="highlights-list" id="highlightsList">
+                    <!-- Highlights will be loaded dynamically -->
+                </ul>
+            </div>
         </aside>
 
         <!-- Main Viewer Area -->
@@ -50,6 +58,11 @@
         </main>
     </div>
 
+    <script type="module">
+        // Load Matterport SDK
+        import * as MP_SDK from 'https://static.matterport.com/showcase-sdk/3.11/sdk.js';
+        window.MP_SDK = MP_SDK;
+    </script>
     <script src="app.js"></script>
 </body>
 </html>

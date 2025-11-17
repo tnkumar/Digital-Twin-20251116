@@ -221,6 +221,77 @@ body {
     background: var(--border-color);
 }
 
+/* Highlights Section */
+.highlights-section {
+    border-top: 1px solid var(--border-color);
+    background-color: var(--sidebar-bg);
+    max-height: 40vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.highlights-header {
+    background-color: var(--sidebar-header);
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.highlights-header h3 {
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.highlights-list {
+    list-style: none;
+    overflow-y: auto;
+    padding: 0.5rem 0;
+    flex: 1;
+}
+
+.highlight-item {
+    margin: 0.25rem 0.75rem;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.highlight-button {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: all 0.2s ease;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.highlight-button:hover {
+    background-color: var(--hover-bg);
+    color: var(--text-primary);
+}
+
+.highlights-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.highlights-list::-webkit-scrollbar-track {
+    background: var(--sidebar-bg);
+}
+
+.highlights-list::-webkit-scrollbar-thumb {
+    background: var(--hover-bg);
+    border-radius: 4px;
+}
+
+.highlights-list::-webkit-scrollbar-thumb:hover {
+    background: var(--border-color);
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .sidebar {
