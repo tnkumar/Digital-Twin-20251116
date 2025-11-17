@@ -7,11 +7,35 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
+    <!-- Login Modal -->
+    <div id="loginModal" class="login-modal">
+        <div class="login-modal-content">
+            <div class="login-header">
+                <h2>Matterport Digital Twin Viewer</h2>
+                <p>Please login to continue</p>
+            </div>
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required autocomplete="current-password">
+                </div>
+                <div id="loginError" class="error-message" style="display: none;"></div>
+                <button type="submit" class="login-button">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Application (hidden until authenticated) -->
+    <div class="container" id="mainApp" style="display: none;">
         <!-- Left Menu Panel -->
         <aside class="sidebar">
             <div class="sidebar-header">
                 <h2>Public Spaces</h2>
+                <button id="logoutBtn" class="logout-button" title="Logout">Logout</button>
             </div>
             <nav class="space-menu">
                 <ul class="space-list" id="spaceList">

@@ -1,4 +1,9 @@
 // DOM Elements
+const loginModal = document.getElementById('loginModal');
+const loginForm = document.getElementById('loginForm');
+const loginError = document.getElementById('loginError');
+const mainApp = document.getElementById('mainApp');
+const logoutBtn = document.getElementById('logoutBtn');
 const spaceList = document.getElementById('spaceList');
 const matterportViewer = document.getElementById('matterportViewer');
 const currentSpaceTitle = document.getElementById('currentSpaceTitle');
@@ -12,11 +17,89 @@ const tagsModalBody = document.getElementById('tagsModalBody');
 const closeTagsModal = document.getElementById('closeTagsModal');
 
 // Current state
+let users = [];
 let spaces = [];
 let currentSpaceId = null;
 let mpSdk = null;
 let highlights = [];
 let allTagsData = [];
+let currentUser = null;
+
+// Load users from JSON file
+async function loadUsers() {
+    try {
+        const response = await fetch('users.json');
+        if (!response.ok) {
+            throw new Error('Failed to load users.json');
+        }
+        users = await response.json();
+        return users;
+    } catch (error) {
+        console.error('Error loading users:', error);
+        return [];
+    }
+}
+
+// Check if user is authenticated
+function isAuthenticated() {
+    const session = localStorage.getItem('matterport_session');
+    if (session) {
+        try {
+            const sessionData = JSON.parse(session);
+            // Check if session is still valid (not expired)
+            if (sessionData.expires && new Date(sessionData.expires) > new Date()) {
+                currentUser = sessionData.user;
+                return true;
+            } else {
+                // Session expired
+                localStorage.removeItem('matterport_session');
+                return false;
+            }
+        } catch (e) {
+            localStorage.removeItem('matterport_session');
+            return false;
+        }
+    }
+    return false;
+}
+
+// Authenticate user
+function authenticate(username, password) {
+    const user = users.find(u => u.username === username && u.password === password);
+    if (user) {
+        // Create session (expires in 24 hours)
+        const sessionData = {
+            user: { username: user.username },
+            expires: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+        };
+        localStorage.setItem('matterport_session', JSON.stringify(sessionData));
+        currentUser = sessionData.user;
+        return true;
+    }
+    return false;
+}
+
+// Logout user
+function logout() {
+    localStorage.removeItem('matterport_session');
+    currentUser = null;
+    showLogin();
+}
+
+// Show login screen
+function showLogin() {
+    loginModal.style.display = 'flex';
+    mainApp.style.display = 'none';
+    // Clear form
+    loginForm.reset();
+    loginError.style.display = 'none';
+}
+
+// Show main application
+function showMainApp() {
+    loginModal.style.display = 'none';
+    mainApp.style.display = 'flex';
+}
 
 // Load spaces from JSON file
 async function loadSpaces() {
@@ -35,11 +118,61 @@ async function loadSpaces() {
 
 // Initialize the application
 async function init() {
-    await loadSpaces();
-    renderSpaceList();
-    // Auto-load the first space
-    if (spaces.length > 0) {
-        loadSpace(spaces[0]);
+    // Load users first
+    await loadUsers();
+    
+    // Check authentication
+    if (isAuthenticated()) {
+        showMainApp();
+        await loadSpaces();
+        renderSpaceList();
+        // Auto-load the first space
+        if (spaces.length > 0) {
+            loadSpace(spaces[0]);
+        }
+    } else {
+        showLogin();
+    }
+    
+    // Add event listeners
+    setupEventListeners();
+}
+
+// Setup event listeners
+function setupEventListeners() {
+    // Login form submission
+    if (loginForm) {
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            
+            loginError.style.display = 'none';
+            
+            if (!username || !password) {
+                loginError.textContent = 'Please enter both username and password';
+                loginError.style.display = 'block';
+                return;
+            }
+            
+            if (authenticate(username, password)) {
+                showMainApp();
+                await loadSpaces();
+                renderSpaceList();
+                // Auto-load the first space
+                if (spaces.length > 0) {
+                    loadSpace(spaces[0]);
+                }
+            } else {
+                loginError.textContent = 'Invalid username or password';
+                loginError.style.display = 'block';
+            }
+        });
+    }
+    
+    // Logout button
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', logout);
     }
 }
 
