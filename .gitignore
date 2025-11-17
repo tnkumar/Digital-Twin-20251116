@@ -1,9 +1,9 @@
 # Credentials and sensitive data
 credentials.json
-users.json
 *.credentials
 .env
 .env.local
+# Note: users.json is included for deployment (contains plain text passwords - not secure for production)
 
 # OS files
 .DS_Store
