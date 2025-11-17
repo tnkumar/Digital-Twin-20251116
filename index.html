@@ -76,6 +76,10 @@
         // Load Matterport SDK
         import * as MP_SDK from 'https://static.matterport.com/showcase-sdk/3.11/sdk.js';
         window.MP_SDK = MP_SDK;
+        console.log('Matterport SDK loaded');
+        
+        // Dispatch event to notify that SDK is ready
+        window.dispatchEvent(new CustomEvent('mpsdkready'));
     </script>
     <script src="app.js"></script>
 </body>

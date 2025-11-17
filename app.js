@@ -123,20 +123,26 @@ function loadSpace(space) {
 async function connectSDK() {
     try {
         // Wait a bit for the iframe to fully load
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise(resolve => setTimeout(resolve, 3000));
         
         // Check if SDK is available
         if (typeof window.MP_SDK === 'undefined') {
             console.warn('Matterport SDK not available. Highlights navigation will be disabled.');
+            console.log('SDK loading status:', {
+                windowMP_SDK: typeof window.MP_SDK,
+                scriptLoaded: document.querySelector('script[type="module"]') !== null
+            });
             return null;
         }
 
+        console.log('Attempting to connect to Matterport SDK...');
+        
         // Connect to the SDK (empty string for applicationKey means using public access)
         mpSdk = await window.MP_SDK.connect(matterportViewer, '', '3.11');
-        console.log('Matterport SDK connected');
+        console.log('Matterport SDK connected successfully');
         
         // Wait a bit more for the model to be ready
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 2000));
         
         // Load highlights after connection
         await loadHighlights();
@@ -144,12 +150,22 @@ async function connectSDK() {
         return mpSdk;
     } catch (error) {
         console.error('Failed to connect to Matterport SDK:', error);
+        console.error('Error details:', {
+            message: error.message,
+            stack: error.stack,
+            SDKAvailable: typeof window.MP_SDK !== 'undefined'
+        });
+        
         // Try alternative method - accessing SDK from iframe
         try {
+            console.log('Trying alternative SDK connection method...');
             if (matterportViewer.contentWindow && matterportViewer.contentWindow.MP_SDK) {
                 mpSdk = await matterportViewer.contentWindow.MP_SDK.connect(matterportViewer, '', '3.11');
+                console.log('Alternative SDK connection successful');
                 await loadHighlights();
                 return mpSdk;
+            } else {
+                console.warn('SDK not found in iframe contentWindow');
             }
         } catch (e) {
             console.error('Alternative SDK connection also failed:', e);
@@ -160,24 +176,43 @@ async function connectSDK() {
 
 // Load highlights from the current Matterport space
 async function loadHighlights() {
-    if (!mpSdk) return;
+    if (!mpSdk) {
+        console.warn('Cannot load highlights: SDK not connected');
+        return;
+    }
     
     try {
+        console.log('Loading highlights/tags...');
         // Get tags (highlights) from the model
         // Try different methods to get highlights/tags
         let tags = [];
         
         try {
+            console.log('Trying mpSdk.Tag.getData()...');
             tags = await mpSdk.Tag.getData();
+            console.log('Tags loaded via Tag.getData():', tags);
         } catch (e) {
+            console.warn('Tag.getData() failed:', e.message);
             // Try alternative method
             try {
+                console.log('Trying mpSdk.Model.getData()...');
                 const model = await mpSdk.Model.getData();
+                console.log('Model data:', model);
                 if (model && model.tags) {
                     tags = model.tags;
+                    console.log('Tags found in model data:', tags);
+                } else if (model && model.sweeps) {
+                    // Sometimes tags are associated with sweeps
+                    console.log('Checking sweeps for tags...');
+                    const sweeps = model.sweeps || [];
+                    for (const sweep of sweeps) {
+                        if (sweep.tags && sweep.tags.length > 0) {
+                            tags = tags.concat(sweep.tags);
+                        }
+                    }
                 }
             } catch (e2) {
-                console.warn('Could not load tags using alternative method');
+                console.warn('Could not load tags using alternative method:', e2.message);
             }
         }
         
@@ -185,10 +220,13 @@ async function loadHighlights() {
         allTagsData = Array.isArray(tags) ? tags : [];
         highlights = allTagsData;
         
+        console.log(`Found ${allTagsData.length} tags/highlights`);
+        
         // Render highlights
         renderHighlights();
     } catch (error) {
         console.error('Failed to load highlights:', error);
+        console.error('Error details:', error.message, error.stack);
         highlights = [];
         allTagsData = [];
         renderHighlights();
