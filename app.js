@@ -31,6 +31,12 @@ function init() {
 function renderSpaceList() {
     spaceList.innerHTML = '';
     
+    // Hide sidebar if there's only one space
+    const sidebar = document.querySelector('.sidebar');
+    if (spaces.length <= 1 && sidebar) {
+        sidebar.style.display = 'none';
+    }
+    
     spaces.forEach(space => {
         const li = document.createElement('li');
         li.className = 'space-item';
