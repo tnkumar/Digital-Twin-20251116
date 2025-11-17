@@ -29,6 +29,18 @@ const spaces = [
         name: "Retail Store",
         description: "Boutique shopping experience",
         modelId: "VqJPHq3zfct"
+    },
+    {
+        id: 6,
+        name: "Interactive Showcase Space A",
+        description: "Digital twin space for interactive comparison",
+        modelId: "xB72BrYZjCq"
+    },
+    {
+        id: 7,
+        name: "Interactive Showcase Space B",
+        description: "Digital twin space for interactive comparison",
+        modelId: "zeasBgZyy8E"
     }
 ];
 
