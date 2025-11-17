@@ -5,6 +5,12 @@ const spaces = [
         name: "Modern Art Gallery",
         description: "Contemporary art exhibition space",
         modelId: "SxQL3iGyoDo"
+    },
+    {
+        id: 2,
+        name: "Luxury Apartment",
+        description: "High-end residential showcase",
+        modelId: "GdCzPvAq2vK"
     }
 ];
 
@@ -21,7 +27,7 @@ let currentSpaceId = null;
 // Initialize the application
 function init() {
     renderSpaceList();
-    // Auto-load the first (and only) space
+    // Auto-load the first space
     if (spaces.length > 0) {
         loadSpace(spaces[0]);
     }
