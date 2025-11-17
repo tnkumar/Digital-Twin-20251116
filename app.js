@@ -110,6 +110,13 @@ matterportViewer.addEventListener('load', () => {
     }
 });
 
+// Handle iframe errors
+matterportViewer.addEventListener('error', () => {
+    console.error('Failed to load Matterport space');
+    loadingMessage.classList.remove('active');
+    alert('Failed to load the Matterport space. The model may not be publicly accessible or the model ID may be incorrect.');
+});
+
 // Keyboard navigation
 document.addEventListener('keydown', (e) => {
     if (!currentSpaceId) return;
