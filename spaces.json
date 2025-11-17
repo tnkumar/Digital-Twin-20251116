@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "name": "Modern Art Gallery",
+    "description": "Contemporary art exhibition space",
+    "modelId": "SxQL3iGyoDo"
+  },
+  {
+    "id": 2,
+    "name": "Luxury Apartment",
+    "description": "High-end residential showcase",
+    "modelId": "GdCzPvAq2vK"
+  }
+]

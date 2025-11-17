@@ -1,19 +1,3 @@
-// Public Matterport spaces
-const spaces = [
-    {
-        id: 1,
-        name: "Modern Art Gallery",
-        description: "Contemporary art exhibition space",
-        modelId: "SxQL3iGyoDo"
-    },
-    {
-        id: 2,
-        name: "Luxury Apartment",
-        description: "High-end residential showcase",
-        modelId: "GdCzPvAq2vK"
-    }
-];
-
 // DOM Elements
 const spaceList = document.getElementById('spaceList');
 const matterportViewer = document.getElementById('matterportViewer');
@@ -22,10 +6,27 @@ const loadingMessage = document.getElementById('loadingMessage');
 const placeholderMessage = document.getElementById('placeholderMessage');
 
 // Current state
+let spaces = [];
 let currentSpaceId = null;
 
+// Load spaces from JSON file
+async function loadSpaces() {
+    try {
+        const response = await fetch('spaces.json');
+        if (!response.ok) {
+            throw new Error('Failed to load spaces.json');
+        }
+        spaces = await response.json();
+        return spaces;
+    } catch (error) {
+        console.error('Error loading spaces:', error);
+        return [];
+    }
+}
+
 // Initialize the application
-function init() {
+async function init() {
+    await loadSpaces();
     renderSpaceList();
     // Auto-load the first space
     if (spaces.length > 0) {
